@@ -1,28 +1,51 @@
 const { request } = require("express");
 
+const EventModel = require("../models/EventModel");
+
 module.exports = {
   index: (req, res, next) => {
-    res.json({
-      events: [
-        {
-          name: "Karol Figaj",
-          event: { key: "front-end", val: "Front-end" },
-          city: { key: "warsaw", val: "Warszawa" },
-        },
-        {
-          name: "Łukasz Badocha",
-          event: { key: "back-end", val: "Back-end" },
-          city: { key: "cracow", val: "Kraków" },
-        },
-      ],
+    EventModel.find({}, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Error while fetching Events",
+          error: err,
+        });
+      }
+
+      res.json(result);
     });
   },
 
   create: (req, res, next) => {
-    const event = req.body;
-    res.end(JSON.stringify(event));
+    const event = new EventModel({
+      name: req.body.name,
+      event: req.body.event,
+      city: req.body.city,
+    });
+    event.save((err, event) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Error while creating Event",
+          error: err,
+        });
+      }
+      return res.status(201).json(event);
+    });
   },
   delete: (req, res, next) => {
-    res.send("delete");
+    const id = req.params.id;
+
+    EventModel.findByIdAndRemove(id, (err, event) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Error while deleting Event",
+          error: err,
+        });
+      }
+      return res.status("200").json({
+        id: id,
+        deleted: true,
+      });
+    });
   },
 };
