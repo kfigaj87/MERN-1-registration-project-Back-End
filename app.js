@@ -17,7 +17,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// zapytać o kolejność dodawania kodu
 const eventsRoutes = require("./app/routes/EventsRouts")();
 app.use("/events", eventsRoutes);
 
