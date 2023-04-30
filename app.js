@@ -22,4 +22,5 @@ app.use("/events", eventsRoutes);
 
 app.listen(config.app.port, () => {
   console.log("Express server is up! Happy hacking :)");
+  debugger;
 });
